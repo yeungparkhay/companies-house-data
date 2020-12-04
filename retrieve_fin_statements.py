@@ -1,10 +1,15 @@
+'''
+Downloads all available financial statements for a company listed on Companies House.
+Takes a single Companies House 'company number' as input.
+'''
+
 import requests
 import json
 import pandas as pd
 import numpy as np
 
-key = 'C59-GL9Hnn2LpII0CRuSN9X8DrT4x5llA6G3mlzP'  # API key
-company_no = '08065100'
+key = 'C59-GL9Hnn2LpII0CRuSN9X8DrT4x5llA6G3mlzP'  # Companies House API key
+company_no = '08065100'  # Companies House company number
 
 profile_url = "https://api.companieshouse.gov.uk/company/{company_no}"
 accounts_url = "https://api.companieshouse.gov.uk/company/{company_no}/filing-history?category=accounts"

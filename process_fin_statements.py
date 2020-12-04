@@ -3,7 +3,6 @@ Modified from Martin Wood (ONS)'s XBRL image parser
 https://github.com/ONSBigData/parsing_company_accounts/blob/master/xbrl_image_parser.py
 """
 
-# General
 import sys
 import os
 import re
@@ -31,7 +30,7 @@ pd.options.mode.chained_assignment = None
 
 def pdf_to_png(filepath):
     """
-    Convert PDF to PNG image suing pdf2image
+    Convert PDF to PNG image using pdf2image
     """
     destination_filepath = filepath.replace(".pdf", "")
     os.mkdir(destination_filepath)
@@ -51,7 +50,7 @@ def pre_process(png_filepath):
     Image pre-processing entails finding all of the png image files and
     applying a number of cleaning steps to them.
     """
-    # find all of the converted pages
+    # Find all of the converted pages
     png_files = [pngname for pngname in os.listdir(png_filepath)]
 
     for pngname in png_files:
@@ -63,7 +62,7 @@ def pre_process(png_filepath):
         num, grey_composite = cv2.threshold(
             concatenated, 127, 255, cv2.THRESH_BINARY)
 
-        # inverting the image for morphological operations
+        # Inverting the image for morphological operations
         inverted_composite = 255-grey_composite
 
         # Perform closing, dilation followed by erosion
@@ -126,6 +125,7 @@ def make_measurements(data):
     Takes the tabulated OCR output data (pandas DF) and interprets to create more 
     variables, geometric information on where elements are on the page.
     """
+    print("Processing tabulated data")
 
     data['centre_x'] = data['left'] + (data['width'] / 2.)
     data['centre_y'] = data['top'] + (data['height'] / 2.)
@@ -438,6 +438,7 @@ def process_PDF(filepath):
     data['numerical'] = convert_to_numeric(data['text'])
 
     # Find the balance sheet pages
+    print("Identifying relevant pages")
     csv_numbers_BS = find_balance_sheet_pages(data)
 
     # Find the income statement pages
@@ -446,6 +447,7 @@ def process_PDF(filepath):
     results = pd.DataFrame()
 
     # Iterate through balance sheet pages, retrieve everything
+    print("Retrieving financial data")
     for csv_number in csv_numbers_BS:
         page_df = data[data['csv_num'] == csv_number]
 

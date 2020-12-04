@@ -1,3 +1,8 @@
+'''
+Reads all PDF financial statements into Excel from a given directory.
+Automatically detects and retrieves balance sheet and income statement.
+'''
+
 import numpy as np
 import pandas as pd
 import os
@@ -7,15 +12,7 @@ import importlib
 import xlsxwriter
 from styleframe import StyleFrame
 
-import xbrl_image_parser as xip
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-from matplotlib.path import Path
-from matplotlib.patches import PathPatch
-
-from imageio import imread
+import process_financial_statements as pfs
 
 read_path = 'downloads/'
 write_path = 'output/'
@@ -26,16 +23,18 @@ write_path = 'output/'
 def extract_PDF(read_path, write_path):
     files = [f for f in os.listdir(read_path) if isfile(join(read_path, f))]
 
-    importlib.reload(xip)
+    importlib.reload(pfs)
 
     for file in files:
-        results = xip.process_PDF(read_path + file)
+        # Process PDFs and read them into dataframe
+        results = pfs.process_PDF(read_path + file)
 
-        # Save results
+        # Save processed results to local drive so they can be easily retrieved without
+        # having to re-perform processing (as this takes a long time)
         results.to_pickle(write_path + file.replace('pdf', 'pkl'))
         results = pd.read_pickle(write_path + file.replace('pdf', 'pkl'))
 
-        # Reformat numbers and drop unnecessary rows and columns
+        # Reformat values and delete unnecessary attributes
         results['value'] = results['value'].apply(
             lambda x: float(x.replace('-', '0').replace(')', '').replace('(', '-')))
         results = results[['label', 'statement', 'year', 'unit', 'value']]
@@ -54,7 +53,7 @@ def extract_PDF(read_path, write_path):
             i.reset_index(inplace=True)
             i.drop(['statement'], axis=1, inplace=True)
 
-        # Write to Excel
+        # Export to Excel
         writer = StyleFrame.ExcelWriter(
             write_path + file.replace('pdf', 'xlsx'))
         balance_sheet.to_excel(excel_writer=writer,
