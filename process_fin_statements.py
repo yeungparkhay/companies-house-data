@@ -15,7 +15,7 @@ from dateutil import parser
 import shutil
 
 import pytesseract
-import cv2
+from cv2 import cv2
 from pdf2image import convert_from_path
 import io
 
@@ -23,6 +23,8 @@ from io import StringIO
 from wand.image import Image
 from PIL import Image as im
 import codecs
+
+pytesseract.pytesseract.tesseract_cmd=r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 # Disable an annoying (and superfluous) warning
 pd.options.mode.chained_assignment = None

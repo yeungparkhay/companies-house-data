@@ -12,7 +12,7 @@ import importlib
 import xlsxwriter
 from styleframe import StyleFrame
 
-import process_financial_statements as pfs
+import process_fin_statements as pfs
 
 read_path = 'downloads/'
 write_path = 'output/'
