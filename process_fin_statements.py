@@ -275,22 +275,24 @@ def find_balance_sheet_pages(data):
     agg_text = aggregate_sentences_over_lines(data)
 
     # Get a list of pages likely to be balance sheets
-    BS_page_list = pd.unique(agg_text[agg_text['text'].apply(lambda x: np.where(
+    BS1_page_list = pd.unique(agg_text[agg_text['text'].apply(lambda x: np.where(
         re.search("^[abbreviated]*balancesheet", x), True, False))]['csv_num'])
 
-    pos_page_list = pd.unique(agg_text[agg_text['text'].apply(
-        lambda x: np.where(re.search("^statementoffin", x), True, False))]['csv_num'])
+    BS2_page_list = pd.unique(agg_text[agg_text['text'].apply(lambda x: np.where(
+    re.search("^statementoffinancialposition", x), True, False))]['csv_num'])
+
+    #pos_page_list = pd.unique(agg_text[agg_text['text'].apply(
+        #lambda x: np.where(re.search("^statementoffin", x), True, False))]['csv_num'])
 
     # Filter out any page with the words "notes to the financial statements"
     notes_page_list = pd.unique(agg_text[agg_text['text'].apply(
-        lambda x: "notestothefinancialstatements" in x)]['csv_num'])
+        lambda x: "^notestothefinancialstatements" in x)]['csv_num'])
 
     # Filter out any page with the words "Statement of changes in equity"
     statement_page_list = pd.unique(
-        agg_text[agg_text['text'].apply(lambda x: "statementof" in x)]['csv_num'])
+        agg_text[agg_text['text'].apply(lambda x: "^statementofchange" in x)]['csv_num'])
 
-    return([x for x in BS_page_list if x not in list(notes_page_list) + list(statement_page_list)] + list(pos_page_list))
-
+    return([x for x in list(BS1_page_list) + list(BS2_page_list) if x not in list(notes_page_list) + list(statement_page_list)])
 
 def find_income_statement_pages(data):
     """
@@ -314,18 +316,21 @@ def find_income_statement_pages(data):
     PL3_page_list = pd.unique(agg_text[agg_text['text'].apply(lambda x: np.where(
         re.search("^[abbreviated]*incomestatement", x), True, False))]['csv_num'])
 
+    PL4_page_list = pd.unique(agg_text[agg_text['text'].apply(lambda x: np.where(
+        re.search("^[abbreviated]*statementofincome", x), True, False))]['csv_num'])
+
     # Filter out any page with the words "notes to the financial statements"
     notes_page_list = pd.unique(agg_text[agg_text['text'].apply(
         lambda x: "notestothefinancialstatements" in x)]['csv_num'])
 
     # Filter out any page with the words "Statement of changes in equity"
-    BS_page_list = pd.unique(
+    BS1_page_list = pd.unique(
         agg_text[agg_text['text'].apply(lambda x: "balancesheet" in x)]['csv_num'])
 
     BS2_page_list = pd.unique(
         agg_text[agg_text['text'].apply(lambda x: "^[abbreviated]*statementoffinancialposition" in x)]['csv_num'])
 
-    return([x for x in list(PL_page_list) + list(PL2_page_list) + list(PL3_page_list) if x not in list(notes_page_list) + list(BS_page_list) + list(BS2_page_list)])
+    return([x for x in list(PL_page_list) + list(PL2_page_list) + list(PL3_page_list) + list(PL4_page_list) if x not in list(notes_page_list) + list(BS1_page_list) + list(BS2_page_list)])
 
 
 # Lifted this almost directly from David Kane's work

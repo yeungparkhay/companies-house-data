@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 
 key = 'C59-GL9Hnn2LpII0CRuSN9X8DrT4x5llA6G3mlzP'  # Companies House API key
-company_no = '01003142'  # Companies House company number
+company_no = '01337451'  # Companies House company number
 
 profile_url = "https://api.companieshouse.gov.uk/company/{company_no}"
 accounts_url = "https://api.companieshouse.gov.uk/company/{company_no}/filing-history?category=accounts"
